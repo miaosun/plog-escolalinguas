@@ -31,6 +31,16 @@
 :- use_module(library(clpfd)).
 :- use_module(library(lists)).
 
+
+solve(Sol):-
+		statistics(walltime,[Start,_]),
+        nl, escola(Sol),
+		statistics(walltime,[End,_]), 
+		Time is End - Start,
+		nl, format('Solutions in ~3d seconds.~n', [Time]),nl,
+        fd_statistics,nl.
+
+		
 escola(Sol):-
 		Sol = [HCurso, HProf, Vaga], %HoraExtFun, PartTime], 
 		HCurso = [HEsp, HFra, HIng],
@@ -57,9 +67,12 @@ escola(Sol):-
 		LucroSemanal #> 0,
 		
 		labeling([maximize(LucroSemanal)],List),
-
-		
-		write(Sol),nl.
+		write('Maximo Lucro Semanal: '), write(LucroSemanal), nl,
+		write('Plano:'),nl,
+		write('   Hora do Curso Espanhol: '), write(HEsp), nl,
+		write('   Hora do Curso Frances:  '), write(HFra), nl,
+		write('   Hora do Curso Ingles:   '), write(HIng), nl.
+		%write(Sol),nl.
 
 		
 /*		
