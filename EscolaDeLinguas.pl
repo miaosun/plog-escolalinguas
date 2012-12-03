@@ -31,31 +31,45 @@
 :- use_module(library(clpfd)).
 :- use_module(library(lists)).
 
+% Cursos = [Espanhol,Frances,Ingles,Italiano,Alemao,Russo,Portugues]
+%              1        2       3       4       5      6      7            
 
-solve(Sol):-
+curso([1,2,5,7],    %Prof. Annette
+      [1,3,4,6],  %Prof. Charles
+	  [1,2,4,6,7]). %Prof. Boris
+
+precoProf([25,30,40]).
+
+% Curso-Vaga
+caso1([1-15,2-15,3-15]).
+caso2([1-13,2-15,3-11,4-14]).
+caso3([1-12,2-11,3-14,4-15,5-13]).
+caso4([1-13,2-14,3-13,4-15,5-14,6-14]).
+
+solve(Caso,Sol):-
 		statistics(walltime,[Start,_]),
-        nl, escola(Sol),
+        nl, escola(Caso,Sol),
 		statistics(walltime,[End,_]), 
 		Time is End - Start,
 		nl, format('Solutions in ~3d seconds.~n', [Time]),nl,
         fd_statistics,nl.
-
 		
-escola(Sol):-
-		Sol = [HCurso, HProf, Vaga], %HoraExtFun, PartTime], 
-		HCurso = [HEsp, HFra, HIng],
-		Vaga = [V_Esp, V_Fra, V_Ing],
+escola(Caso,Sol):-
+		Sol = [HCurso, HProf], %HoraExtFun, PartTime], 
+		%HCurso = [HEsp, HFra, HIng],
 		HProf = [HAnn, HCha, HBor],
 		
-		List = [HEsp, HFra, HIng, V_Esp, V_Fra, V_Ing, HAnn, HCha, HBor],
+		List = [HEsp, HFra, HIng, HAnn, HCha, HBor],
+		
+		length(Caso,N), length(HCurso,N),
 		domain(HCurso,4,8),
-		domain(Vaga,1,15),
 		domain(HProf,4,16),
+		
 %		HoraExtFun in 0..15,
 %		PartTime in 0..10,
 		
 		sum(HCurso,#=,TotalHCurso),
-		sum(Vaga,#=,TotalVaga),		
+				
 		Income #= TotalHCurso*TotalVaga*10,
 		
 %		ext_Fun(TotalHCurso,CustoExt),
