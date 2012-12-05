@@ -49,22 +49,22 @@ precoProf([25,30,40]).
 
 % Curso-Vaga
 caso1([1-15,2-15,3-15]).
-indCursos([1,2,3]).  % PROVISÓRIO
 caso2([1-13,2-15,3-11,4-14]).
 caso3([1-12,2-11,3-14,4-15,5-13]).
 caso4([1-13,2-14,3-13,4-15,5-14,6-14]).
 
-sep_caso([],0).
-sep_caso([NCurso-Vaga|Resto],TotalVaga):-
-		%append(NCurso,IndCurso),
-		sep_caso(Resto,Ind,Acum),
+%IndCurso - lista dos indices dos cursos,  TotalVaga - Somatorio das vagas de tudos cursos
+sep_caso([],IndCurso,IndCurso,0).
+sep_caso([NCurso-Vaga|Resto],Acc,IndCurso,TotalVaga):-
+		sep_caso(Resto,[NCurso|Acc],IndCurso,Acum),
 		TotalVaga is Acum+Vaga.
 
-restringe_profs(). % TODO! restringe professores que leccionam o curso
+
+%restringe_profs(). % TODO! restringe professores que leccionam o curso
 
 % [E|R] é uma lista de profs: [1,2,3]
 % verifica se nr de cursos de cada professor está entre 1 e 2
-verifica_nr_cursos_prof(_,0,_).
+verifica_nr_cursos_prof(_,0).
 verifica_nr_cursos_prof(NProf,N):- count(N,NProf,#=,Count),Count#=1 #\ Count#=2,
 						N1 is N-1,
 						verifica_nr_cursos_prof(NProf,N1).
@@ -86,12 +86,11 @@ escola(Caso,Sol):-
 		%curso_prof(CursoProf),
 		prof_curso(ProfCurso),
 	
-		indCursos(IndCursos). %provisório!
+		sep_caso(Caso,[],IndCurso,TotalVaga),
 		
 		sum(HCurso,#=,TotalHCurso),
 		%sum(HProf,#=,TotalHProf),
 
-		sep_caso(Caso, TotalVaga).  % soma do número total de vagas
 		Income #= TotalHCurso*TotalVaga*10, % receita total por semana
 		
 %		ext_Fun(TotalHCurso,CustoExt),
