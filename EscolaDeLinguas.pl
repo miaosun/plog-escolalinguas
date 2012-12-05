@@ -62,7 +62,12 @@ sep_caso([NCurso-Vaga|Resto],TotalVaga):-
 
 restringe_profs(). % TODO! restringe professores que leccionam o curso
 
-verifica_nr_cursos_prof(NProf,). % TODO! verifica se nr de cursos de cada professor está entre 1 e 2
+% [E|R] é uma lista de profs: [1,2,3]
+% verifica se nr de cursos de cada professor está entre 1 e 2
+verifica_nr_cursos_prof(_,0,_).
+verifica_nr_cursos_prof(NProf,N):- count(N,NProf,#=,Count),Count#=1 #\ Count#=2,
+						N1 is N-1,
+						verifica_nr_cursos_prof(NProf,N1).
 
 escola(Caso,Sol):-
 		%Sol = [NProf-HCurso], %HoraExtFun, PartTime], 
