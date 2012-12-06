@@ -133,13 +133,14 @@ escola(Caso):-
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		horas_por_professor(HCurso,NProf,HProf,NP),
 		
-		% domain(hExtra,0,5), domain(hPt,0,10),
-		% HFunc <= 2*40 + 2*hExtra + hPt.
+		domain(hExtra,0,5), domain(hPt,0,10),
+		(N*15) <= 2*40 + 2*hExtra + hPt,
+		CustoFunc #= (2*40*15 + 2*hExtra*25 + hPt*10),
 		
 		scalar_product([25,30,40],HProf,#=,CustoProf),
 		%CustoFun #= 2*40*15 + CustoExt,
 		Income#>CustoProf #/\ Income#>2*40*15,
-		LucroSemanal #= Income - CustoProf - 2*40*15,
+		LucroSemanal #= Income - CustoProf - HFunc,
 		LucroSemanal #> 0,
 		
 		labeling([maximize(LucroSemanal)],List),
