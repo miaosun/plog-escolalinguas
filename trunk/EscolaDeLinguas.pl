@@ -80,6 +80,8 @@ aplica_prof(IndispProfCurso,[Ind1|Resto],[NProf1|NProfResto]):-
 		nth_member(Ind1,IndispProfCurso,IndispProf), aplica_prof_aux(IndispProf,NProf1),
 		aplica_prof(IndispProfCurso,Resto,NProfResto).
 		
+		
+		
 horas_por_professor(_,_,HProf,0).
 horas_por_professor(HCurso,NProf,HProf,NP):-
 				horas_aux(HCurso,NProf,NP,Acum,Total),
@@ -133,15 +135,16 @@ escola(Caso):-
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		horas_por_professor(HCurso,NProf,HProf,NP),
 		
+
 		domain(hExtra,0,5), domain(hPt,0,10),
 		(N*15) <= 2*40 + 2*hExtra + hPt,
 		CustoFunc #= (2*40*15 + 2*hExtra*25 + hPt*10),
 		
 		scalar_product([25,30,40],HProf,#=,CustoProf),
 		%CustoFun #= 2*40*15 + CustoExt,
-		Income#>CustoProf #/\ Income#>2*40*15,
+		%Income#>CustoProf #/\ Income#>2*40*15,
 		LucroSemanal #= Income - CustoProf - HFunc,
-		LucroSemanal #> 0,
+		%LucroSemanal #> 0,
 		
 		labeling([maximize(LucroSemanal)],List),
 		write('Maximo Lucro Semanal: '), write(LucroSemanal), nl,
