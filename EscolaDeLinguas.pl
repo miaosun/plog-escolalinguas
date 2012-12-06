@@ -34,8 +34,14 @@
 % Cursos = [Espanhol,Frances,Ingles,Italiano,Alemao,Russo,Portugues]
 %              1        2      3       4       5      6       7         
 
-   
 profs(['Annete','Charles','Boris','ABC']).
+curso(1,'Espanhol').
+curso(2,'Frances').
+curso(3,'Ingles').
+curso(4,'Italiano').
+curso(5,'Alemao').
+curso(6,'Russo').
+curso(7,'Portugues').
 
 /*
 curso_prof([1,2,5,7],    %Prof. Annette
@@ -65,23 +71,29 @@ verifica_nr_cursos_prof(_,0).
 verifica_nr_cursos_prof(NProf,N):- count(N,NProf,#=,Count),Count#=1 #\ Count#=2,
 						N1 is N-1,
 						verifica_nr_cursos_prof(NProf,N1).
-
+/*
 nth_member(1,[X|_],X).
 nth_member(N,[_|L],X):-
 	N>1, M is N-1,
 	nth_member(M,L,X).
-
+*/
 aplica_prof_aux([],_).	
 aplica_prof_aux([IndispProf1|T],NProf1):-
 		NProf1 #\= IndispProf1, aplica_prof_aux(T,NProf1).
 												
 aplica_prof(_IndispProfCurso,[],_NProf).
 aplica_prof(IndispProfCurso,[Ind1|Resto],[NProf1|NProfResto]):-
-		nth_member(Ind1,IndispProfCurso,IndispProf), aplica_prof_aux(IndispProf,NProf1),
+		element(Ind1,IndispProfCurso,IndispProf), aplica_prof_aux(IndispProf,NProf1),
 		aplica_prof(IndispProfCurso,Resto,NProfResto).
-		
-		
-		
+
+/*
+horas_por_prof([],[],HProf).
+horas_por_prof(HCurso,NProf,HProf,Np):-
+		element(Ind,HProf,Np), element(Ind,HCurso,Hps), 
+*/
+%ind_hor_prof([NProf1|NResto],IndHProf,NP):-
+
+/*		
 horas_por_professor(_,_,HProf,0).
 horas_por_professor(HCurso,NProf,HProf,NP):-
 				horas_aux(HCurso,NProf,NP,Acum,Total),
@@ -92,20 +104,16 @@ horas_por_professor(HCurso,NProf,HProf,NP):-
 horas_aux([],[],_,Acum,Total):- write(Total).				
 horas_aux([HC|TC],[HP|TP],N,Acum,Total) :- (N #= HP) #=> (Total #= Acum+HC),
 		horas_aux([TC],[TP],N,Acum,Total).
-
-/*
-abc([],_).
-abc([H1|T1],[H|T]) :-
-			abc([T1],[T]), H = H1.
-			*/
+*/
 			
 print_plano([],[]).				
-print_plano([H|Hs],[P|Ps],ListaProfs,[C|Cs]):-	
-				write(' Curso de '), write(C), nl,
-				element(P,[ListaProfs],NomeP),
+print_plano([H|Hs],[P|Ps],ListaProfs,[Ind1|Inds]):-	
+				write(' Curso de '), curso(Ind1,Curso), write(Curso), nl,
+				element(P,ListaProfs,NomeP),
 				write(' Professor: '), write(NomeP), nl,
 				write('Numero Horas Semanais: '), write(H), nl,
 				print_plano(Hs,Ps,ListaProfs,Cs).
+
 						
 escola(Caso):-
 		%Sol = [NProf-HCurso], %HoraExtFun, PartTime], 
@@ -129,28 +137,24 @@ escola(Caso):-
 		verifica_nr_cursos_prof(NProf,NP),
 		
 		sum(HCurso,#=,TotalHCurso),
-		%sum(HProf,#=,TotalHProf),
 
 		Income #= TotalHCurso*TotalVaga*10, % receita total por semana
-		
-%		ext_Fun(TotalHCurso,CustoExt),
 		
 		%%%%%%%%%%%%%%%%%%falta implementar HProf%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		%%%%%    HCurso([H1,H2,H3,H4,H5])
 		%%%%%    NProf([ 1,3, 1, 2, 3])
 		%%%%%    HProf([H1+H3,H4,H2+H5]).
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		horas_por_professor(HCurso,NProf,HProf,NP),
-		
+		%horas_por_professor(HCurso,NProf,HProf,NP),		
 
-		domain(hExtra,0,5), domain(hPt,0,10),
-		(N*15) <= 2*40 + 2*hExtra + hPt,
-		CustoFunc #= (2*40*15 + 2*hExtra*25 + hPt*10),
+		domain(hExtra,0,10), domain(hPt,0,10),
+		(N*15) #=< 2*40 + hExtra + hPt,
+		CustoFunc #= (2*40*15 + hExtra*25 + hPt*10),
 		
 		scalar_product([25,30,40],HProf,#=,CustoProf),
-		%CustoFun #= 2*40*15 + CustoExt,
+
 		%Income#>CustoProf #/\ Income#>2*40*15,
-		LucroSemanal #= Income - CustoProf - HFunc,
+		LucroSemanal #= Income - CustoProf - CustoFunc,
 		%LucroSemanal #> 0,
 		
 		labeling([maximize(LucroSemanal)],List),
@@ -158,34 +162,18 @@ escola(Caso):-
 		write('Plano:'),nl,
 		
 		%criar ListaCursos com nomes dos cursos de IndCursos
-		print_plano(HCurso,NProf,ListaProfs,ListaCursos).
+		print_plano(HCurso,NProf,ListaProfs,IndCurso).
 		
 		
-
-		solve(Caso):-
+solve(Caso):-
 		statistics(walltime,[Start,_]),
         nl, escola(Caso),
 		statistics(walltime,[End,_]), 
 		Time is End - Start,
 		nl, format('Solutions in ~3d seconds.~n', [Time]),nl,
         fd_statistics,nl.	
-		
-		
-		
-/*		
-ext_Fun(TotalHCurso, CustoExt):-
-		MaxHFun = 2*40,
-		((TotalHCurso =< MaxHFun, CustoExt = 0);		
-		 (HoraExt #= TotalHCurso-MaxHFun,		 
-		  HoraExtFun in 1..10, %25€/h (sao 2 funcionarios)
-		  PartTime in 1..10,  %10€/h		  
-		  %HoraExt #= HoraExtFun + PartTime,		 
-		  CustoExtFun #= 25*HoraExtFun,
-		  CustoPartTime #= 10*PartTime,
-		  CustoExt #= CustoExtFun + CustoPartTime,
-		  labeling([minimize(CustoExt)],[HoraExt,PartTime]))).
-*/		
-		
+	
+
 		
 	
 		
