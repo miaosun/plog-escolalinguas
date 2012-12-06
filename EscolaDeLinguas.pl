@@ -73,12 +73,12 @@ nth_membro(N,[_|L],X):-
 
 aplica_prof_aux([],_).	
 aplica_prof_aux([IndispProf1|T],NProf1):-
-		N1 #\= IndispProf1, aplica_prof_aux(T,NProf1).
+		NProf1 #\= IndispProf1, aplica_prof_aux(T,NProf1).
 												
 aplica_prof(_IndispProfCurso,[],_NProf).
-aplica_prof(IndispProfCurso,[Ind1|Resto],[NProf1|NProfResto]):
+aplica_prof(IndispProfCurso,[Ind1|Resto],[NProf1|NProfResto]):-
 		nth_member(Ind1,IndispProfCurso,IndispProf), aplica_prof_aux(IndispProf,NProf1),
-		aplica_prof([IndispProfCurso,Resto,NProfResto).
+		aplica_prof(IndispProfCurso,Resto,NProfResto).
 		
 		
 						
