@@ -35,7 +35,7 @@
 %              1        2      3       4       5      6       7         
 
    
-% Professor = [Annete,Charles,Boris]
+profs(['Annete','Charles','Boris']).
 
 /*
 curso_prof([1,2,5,7],    %Prof. Annette
@@ -69,7 +69,7 @@ verifica_nr_cursos_prof(NProf,N):- count(N,NProf,#=,Count),Count#=1 #\ Count#=2,
 nth_member(1,[X|_],X).
 nth_member(N,[_|L],X):-
 	N>1, M is N-1,
-	nth_membro(M,L,X).
+	nth_member(M,L,X).
 
 aplica_prof_aux([],_).	
 aplica_prof_aux([IndispProf1|T],NProf1):-
@@ -89,7 +89,8 @@ escola(Caso):-
 %		HoraExtFun in 0..15,
 %		PartTime in 0..10,
 
-		length(Caso,N), length(HCurso,N), length(NProf,N), 
+		length(Caso,N), length(HCurso,N), length(NProf,N),
+		profs(ListaProfs), length(ListaProfs,NP),
 		
 		domain(HCurso,4,8), % lista com as horas de cada curso (indice)
 		domain(NProf,1,3),  % lista c professor p cada curso (indice)
@@ -99,7 +100,7 @@ escola(Caso):-
 	
 		sep_caso(Caso,[],IndCurso,TotalVaga),
 		aplica_prof(IndispProfCurso,IndCurso,NProf),
-		verifica_nr_cursos_prof(NProf,3),
+		verifica_nr_cursos_prof(NProf,NP),
 		
 		sum(HCurso,#=,TotalHCurso),
 		%sum(HProf,#=,TotalHProf),
@@ -113,6 +114,7 @@ escola(Caso):-
 		%%%%%    NProf([ 1,3, 1, 2, 3])
 		%%%%%    HProf([H1+H3,H4,H2+H5]).
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		
 		scalar_product([25,30,40],HProf,#=,CustoProf),
 		%CustoFun #= 2*40*15 + CustoExt,
 		Income#>CustoProf #/\ Income#>2*40*15,
