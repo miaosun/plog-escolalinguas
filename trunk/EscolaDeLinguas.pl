@@ -78,7 +78,7 @@ aplica_prof_aux([IndispProf1|T],NProf1):-
 												
 aplica_prof(_IndispProfCurso,[],_NProf).
 aplica_prof(IndispProfCurso,[Ind1|Resto],[NProf1|NProfResto]):-
-		element(Ind1,IndispProfCurso,IndispProf), aplica_prof_aux(IndispProf,NProf1),
+		nth1(Ind1,IndispProfCurso,IndispProf), aplica_prof_aux(IndispProf,NProf1),
 		aplica_prof(IndispProfCurso,Resto,NProfResto).
 
 /*
@@ -86,8 +86,6 @@ horas_por_prof([],[],HProf).
 horas_por_prof(HCurso,NProf,HProf,Np):-
 		element(Ind,HProf,Np), element(Ind,HCurso,Hps), 
 */
-%ind_hor_prof([NProf1|NResto],IndHProf,NP):-
-
 		
 horas_por_professor(_,_,HProf,0).
 horas_por_professor(HCurso,NProf,HProf,NP):-
@@ -96,9 +94,9 @@ horas_por_professor(HCurso,NProf,HProf,NP):-
 				NP1 is NP-1,
 				horas_por_professor(HCurso,NProf,HProf,NP1).
 					
-horas_aux([],[],_,Acum,Total):- write(Total).				
-horas_aux([HCurso1|HResto],[NProf1|NResto],NP,Acum,Total):-
-		(NP #= NProf1, Total #= Acum+HCurso1,horas_aux(HResto,NResto,NP,Acum,Total)) #\ (horas_aux(HResto,NResto,NP,Acum,Total)).
+horas_aux([],[],_,Total):- write(Total).				
+horas_aux([HCurso1|HResto],[NProf1|NResto],NP,Total):-
+		(NP #= NProf1, horas_aux(HResto,NResto,NP,Total), Total #= Acum+HCurso1) #\ (horas_aux(HResto,NResto,NP,Total)).
 			
 print_plano([],[]).				
 print_plano([H|Hs],[P|Ps],ListaProfs,[Ind1|Inds]):-	
@@ -132,15 +130,14 @@ escola(Caso):-
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		%horas_por_professor(HCurso,NProf,HProf,NP),		
 
-		domain(hExtra,0,10), domain(hPt,0,10),
-		(N*15) #=< 2*40 + hExtra + hPt,
-		CustoFunc #= (2*40*15 + hExtra*25 + hPt*10),
+		domain([HExtra],0,10), domain([HPt],0,10),
+		(N*15) #=< 2*40 + HExtra + HPt,
+		CustoFunc #= (2*40*15 + HExtra*25 + HPt*10),
 		
 		scalar_product([25,30,40],HProf,#=,CustoProf),
 
-		Income#>CustoProf #/\ Income#>CustoFunc,
+		Income#>CustoProf+CustoFunc,
 		LucroSemanal #= Income - CustoProf - CustoFunc,
-		LucroSemanal #> 0,
 		
 		labeling([maximize(LucroSemanal)],[HCurso,NProf,HProf]),
 		write('Maximo Lucro Semanal: '), write(LucroSemanal), nl,
