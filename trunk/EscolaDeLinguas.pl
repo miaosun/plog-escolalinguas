@@ -34,7 +34,7 @@
 % Cursos = [Espanhol,Frances,Ingles,Italiano,Alemao,Russo,Portugues]
 %              1        2      3       4       5      6       7         
 
-profs(['Annete','Charles','Boris','ABC']).
+profs(['Annete','Charles','Boris']).
 curso(1,'Espanhol').
 curso(2,'Frances').
 curso(3,'Ingles').
@@ -71,12 +71,7 @@ verifica_nr_cursos_prof(_,0).
 verifica_nr_cursos_prof(NProf,N):- count(N,NProf,#=,Count),Count#=1 #\ Count#=2,
 						N1 is N-1,
 						verifica_nr_cursos_prof(NProf,N1).
-/*
-nth_member(1,[X|_],X).
-nth_member(N,[_|L],X):-
-	N>1, M is N-1,
-	nth_member(M,L,X).
-*/
+
 aplica_prof_aux([],_).	
 aplica_prof_aux([IndispProf1|T],NProf1):-
 		NProf1 #\= IndispProf1, aplica_prof_aux(T,NProf1).
@@ -93,18 +88,17 @@ horas_por_prof(HCurso,NProf,HProf,Np):-
 */
 %ind_hor_prof([NProf1|NResto],IndHProf,NP):-
 
-/*		
+		
 horas_por_professor(_,_,HProf,0).
 horas_por_professor(HCurso,NProf,HProf,NP):-
 				horas_aux(HCurso,NProf,NP,Acum,Total),
-				element(NP,HProf,Acum),
-				NP1#=NP-1,
-				horas_por_professor([HCurso,NProf,HProf,NP1).
+				element(NP,HProf,Total),
+				NP1 is NP-1,
+				horas_por_professor(HCurso,NProf,HProf,NP1).
 					
 horas_aux([],[],_,Acum,Total):- write(Total).				
-horas_aux([HC|TC],[HP|TP],N,Acum,Total) :- (N #= HP) #=> (Total #= Acum+HC),
-		horas_aux([TC],[TP],N,Acum,Total).
-*/
+horas_aux([HCurso1|HResto],[NProf1|NResto],NP,Acum,Total):-
+		(NP #= NProf1, Total #= Acum+HCurso1,horas_aux(HResto,NResto,NP,Acum,Total)) #\ (horas_aux(HResto,NResto,NP,Acum,Total)).
 			
 print_plano([],[]).				
 print_plano([H|Hs],[P|Ps],ListaProfs,[Ind1|Inds]):-	
@@ -116,13 +110,6 @@ print_plano([H|Hs],[P|Ps],ListaProfs,[Ind1|Inds]):-
 
 						
 escola(Caso):-
-		%Sol = [NProf-HCurso], %HoraExtFun, PartTime], 
-		%HCurso = [HEsp, HFra, HIng],
-%		HProf = [HAnn, HCha, HBor],	
-%		List = [HEsp, HFra, HIng, HAnn, HCha, HBor],		
-%		HoraExtFun in 0..15,
-%		PartTime in 0..10,
-
 		length(Caso,N), length(HCurso,N), length(NProf,N),
 		profs(ListaProfs), length(ListaProfs,NP),
 		
@@ -130,14 +117,12 @@ escola(Caso):-
 		domain(NProf,1,3),  % lista c professor p cada curso (indice)
 		
 		%curso_prof(CursoProf), prof_curso(ProfCurso),
-		indisp_prof_curso(IndispProfCurso),
-	
+		indisp_prof_curso(IndispProfCurso),	
 		sep_caso(Caso,[],IndCurso,TotalVaga),
 		aplica_prof(IndispProfCurso,IndCurso,NProf),
 		verifica_nr_cursos_prof(NProf,NP),
 		
 		sum(HCurso,#=,TotalHCurso),
-
 		Income #= TotalHCurso*TotalVaga*10, % receita total por semana
 		
 		%%%%%%%%%%%%%%%%%%falta implementar HProf%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -153,11 +138,11 @@ escola(Caso):-
 		
 		scalar_product([25,30,40],HProf,#=,CustoProf),
 
-		%Income#>CustoProf #/\ Income#>2*40*15,
+		Income#>CustoProf #/\ Income#>CustoFunc,
 		LucroSemanal #= Income - CustoProf - CustoFunc,
-		%LucroSemanal #> 0,
+		LucroSemanal #> 0,
 		
-		labeling([maximize(LucroSemanal)],List),
+		labeling([maximize(LucroSemanal)],[HCurso,NProf,HProf]),
 		write('Maximo Lucro Semanal: '), write(LucroSemanal), nl,
 		write('Plano:'),nl,
 		
