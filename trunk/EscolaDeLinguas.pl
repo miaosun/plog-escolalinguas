@@ -43,7 +43,8 @@ curso_prof([1,2,5,7],    %Prof. Annette
 		   [1,2,4,6,7]). %Prof. Boris
 */
 
-prof_curso([[1,2,3],[1,3],[2],[2,3],[1],[2,3],[1,3]]).		   
+%prof_curso([[1,2,3],[1,3],[2],[2,3],[1],[2,3],[1,3]]).		   
+indisp_prof_curso([[],[2],[1,3],[1],[2,3],[1],[2]]).
 		   
 precoProf([25,30,40]).
 
@@ -69,6 +70,22 @@ verifica_nr_cursos_prof(NProf,N):- count(N,NProf,#=,Count),Count#=1 #\ Count#=2,
 						N1 is N-1,
 						verifica_nr_cursos_prof(NProf,N1).
 
+nth_membro(1,[X|_],X).
+nth_membro(N,[_|L],X):-
+	N>1, M is N-1,
+	nth_membro(M,L,X).
+
+aplica_prof_aux([],_).	
+aplica_prof_aux([IndispProf1|T],NProf1):-
+		N1 #\= IndispProf1, aplica_prof_aux(T,NProf1).
+												
+aplica_prof(_IndispProfCurso,[],_NProf).
+aplica_prof(IndispProfCurso,[Ind1|Resto],[NProf1|NProfResto]):
+		nth_member(Ind1,IndispProfCurso,IndispProf), aplica_prof_aux(IndispProf,NProf1),
+		aplica_prof([IndispProfCurso,Resto,NProfResto).
+		
+		
+						
 escola(Caso,Sol):-
 		%Sol = [NProf-HCurso], %HoraExtFun, PartTime], 
 		%HCurso = [HEsp, HFra, HIng],
@@ -84,9 +101,12 @@ escola(Caso,Sol):-
 		%domain(CProf,1,2), % necessário? cursos por professor entre 1 e 2
 		
 		%curso_prof(CursoProf),
-		prof_curso(ProfCurso),
+		%prof_curso(ProfCurso),
+		indisp_prof_curso(IndispProfCurso),
 	
 		sep_caso(Caso,[],IndCurso,TotalVaga),
+		
+		%aplica_prof(IndispProfCurso,IndCurso,NProf),
 		
 		sum(HCurso,#=,TotalHCurso),
 		%sum(HProf,#=,TotalHProf),
