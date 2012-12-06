@@ -66,8 +66,8 @@ verifica_nr_cursos_prof(NProf,N):- count(N,NProf,#=,Count),Count#=1 #\ Count#=2,
 						N1 is N-1,
 						verifica_nr_cursos_prof(NProf,N1).
 
-nth_membro(1,[X|_],X).
-nth_membro(N,[_|L],X):-
+nth_member(1,[X|_],X).
+nth_member(N,[_|L],X):-
 	N>1, M is N-1,
 	nth_membro(M,L,X).
 
@@ -80,9 +80,8 @@ aplica_prof(IndispProfCurso,[Ind1|Resto],[NProf1|NProfResto]):-
 		nth_member(Ind1,IndispProfCurso,IndispProf), aplica_prof_aux(IndispProf,NProf1),
 		aplica_prof(IndispProfCurso,Resto,NProfResto).
 		
-		
 						
-escola(Caso,Sol):-
+escola(Caso):-
 		%Sol = [NProf-HCurso], %HoraExtFun, PartTime], 
 		%HCurso = [HEsp, HFra, HIng],
 %		HProf = [HAnn, HCha, HBor],	
@@ -109,6 +108,11 @@ escola(Caso,Sol):-
 		
 %		ext_Fun(TotalHCurso,CustoExt),
 		
+		%%%%%%%%%%%%%%%%%%falta implementar HProf%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		%%%%%   HCurso([H1,H2,H3,H4,H5])
+		%%%%%    NProf([ 1,3, 1, 2, 3])
+		%%%%%    HProf([H1+H3,H4,H2+H5]).
+		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 		scalar_product([25,30,40],HProf,#=,CustoProf),
 		%CustoFun #= 2*40*15 + CustoExt,
 		Income#>CustoProf #/\ Income#>2*40*15,
@@ -139,9 +143,9 @@ ext_Fun(TotalHCurso, CustoExt):-
 */		
 		
 		
-solve(Caso,Sol):-
+solve(Caso):-
 		statistics(walltime,[Start,_]),
-        nl, escola(Caso,Sol),
+        nl, escola(Caso),
 		statistics(walltime,[End,_]), 
 		Time is End - Start,
 		nl, format('Solutions in ~3d seconds.~n', [Time]),nl,
