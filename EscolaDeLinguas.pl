@@ -99,6 +99,13 @@ abc([H1|T1],[H|T]) :-
 			abc([T1],[T]), H = H1.
 			*/
 			
+print_plano([],[]).				
+print_plano([H|Hs],[P|Ps],ListaProfs,[C|Cs]):-	
+				write(' Curso de '), write(C), nl,
+				element(P,[ListaProfs],NomeP),
+				write(' Professor: '), write(NomeP), nl,
+				write('Numero Horas Semanais: '), write(H), nl,
+				print_plano(Hs,Ps,ListaProfs,Cs).
 						
 escola(Caso):-
 		%Sol = [NProf-HCurso], %HoraExtFun, PartTime], 
@@ -149,11 +156,21 @@ escola(Caso):-
 		labeling([maximize(LucroSemanal)],List),
 		write('Maximo Lucro Semanal: '), write(LucroSemanal), nl,
 		write('Plano:'),nl,
-		write('   Hora do Curso Espanhol: '), write(HEsp), nl,
-		write('   Hora do Curso Frances:  '), write(HFra), nl,
-		write('   Hora do Curso Ingles:   '), write(HIng), nl.
-		%write(Sol),nl.
+		
+		%criar ListaCursos com nomes dos cursos de IndCursos
+		print_plano(HCurso,NProf,ListaProfs,ListaCursos).
+		
+		
 
+		solve(Caso):-
+		statistics(walltime,[Start,_]),
+        nl, escola(Caso),
+		statistics(walltime,[End,_]), 
+		Time is End - Start,
+		nl, format('Solutions in ~3d seconds.~n', [Time]),nl,
+        fd_statistics,nl.	
+		
+		
 		
 /*		
 ext_Fun(TotalHCurso, CustoExt):-
@@ -170,13 +187,7 @@ ext_Fun(TotalHCurso, CustoExt):-
 */		
 		
 		
-solve(Caso):-
-		statistics(walltime,[Start,_]),
-        nl, escola(Caso),
-		statistics(walltime,[End,_]), 
-		Time is End - Start,
-		nl, format('Solutions in ~3d seconds.~n', [Time]),nl,
-        fd_statistics,nl.		
+	
 		
 		
 		
