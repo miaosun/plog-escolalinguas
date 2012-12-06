@@ -35,7 +35,7 @@
 %              1        2      3       4       5      6       7         
 
    
-profs(['Annete','Charles','Boris']).
+profs(['Annete','Charles','Boris','ABC']).
 
 /*
 curso_prof([1,2,5,7],    %Prof. Annette
@@ -80,6 +80,23 @@ aplica_prof(IndispProfCurso,[Ind1|Resto],[NProf1|NProfResto]):-
 		nth_member(Ind1,IndispProfCurso,IndispProf), aplica_prof_aux(IndispProf,NProf1),
 		aplica_prof(IndispProfCurso,Resto,NProfResto).
 		
+horas_por_professor(_,_,HProf,0).
+horas_por_professor(HCurso,NProf,HProf,NP):-
+				horas_aux(HCurso,NProf,NP,Acum,Total),
+				element(NP,HProf,Acum),
+				NP1#=NP-1,
+				horas_por_professor([HCurso,NProf,HProf,NP1).
+					
+horas_aux([],[],_,Acum,Total):- write(Total).				
+horas_aux([HC|TC],[HP|TP],N,Acum,Total) :- (N #= HP) #=> (Total #= Acum+HC),
+		horas_aux([TC],[TP],N,Acum,Total).
+
+/*
+abc([],_).
+abc([H1|T1],[H|T]) :-
+			abc([T1],[T]), H = H1.
+			*/
+			
 						
 escola(Caso):-
 		%Sol = [NProf-HCurso], %HoraExtFun, PartTime], 
@@ -110,10 +127,14 @@ escola(Caso):-
 %		ext_Fun(TotalHCurso,CustoExt),
 		
 		%%%%%%%%%%%%%%%%%%falta implementar HProf%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		%%%%%   HCurso([H1,H2,H3,H4,H5])
+		%%%%%    HCurso([H1,H2,H3,H4,H5])
 		%%%%%    NProf([ 1,3, 1, 2, 3])
 		%%%%%    HProf([H1+H3,H4,H2+H5]).
 		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+		horas_por_professor(HCurso,NProf,HProf,NP),
+		
+		% domain(hExtra,0,5), domain(hPt,0,10),
+		% HFunc <= 2*40 + 2*hExtra + hPt.
 		
 		scalar_product([25,30,40],HProf,#=,CustoProf),
 		%CustoFun #= 2*40*15 + CustoExt,
