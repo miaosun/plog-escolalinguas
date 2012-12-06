@@ -46,7 +46,7 @@ curso_prof([1,2,5,7],    %Prof. Annette
 %prof_curso([[1,2,3],[1,3],[2],[2,3],[1],[2,3],[1,3]]).		   
 indisp_prof_curso([[],[2],[1,3],[1],[2,3],[1],[2]]).
 		   
-precoProf([25,30,40]).
+%precoProf([25,30,40]).
 
 % Curso-Vaga
 caso1([1-15,2-15,3-15]).
@@ -60,10 +60,6 @@ sep_caso([NCurso-Vaga|Resto],Acc,IndCurso,TotalVaga):-
 		sep_caso(Resto,[NCurso|Acc],IndCurso,Acum),
 		TotalVaga is Acum+Vaga.
 
-
-%restringe_profs(). % TODO! restringe professores que leccionam o curso
-
-% [E|R] é uma lista de profs: [1,2,3]
 % verifica se nr de cursos de cada professor está entre 1 e 2
 verifica_nr_cursos_prof(_,0).
 verifica_nr_cursos_prof(NProf,N):- count(N,NProf,#=,Count),Count#=1 #\ Count#=2,
@@ -98,15 +94,13 @@ escola(Caso,Sol):-
 		
 		domain(HCurso,4,8), % lista com as horas de cada curso (indice)
 		domain(NProf,1,3),  % lista c professor p cada curso (indice)
-		%domain(CProf,1,2), % necessário? cursos por professor entre 1 e 2
 		
-		%curso_prof(CursoProf),
-		%prof_curso(ProfCurso),
+		%curso_prof(CursoProf), prof_curso(ProfCurso),
 		indisp_prof_curso(IndispProfCurso),
 	
 		sep_caso(Caso,[],IndCurso,TotalVaga),
-		
-		%aplica_prof(IndispProfCurso,IndCurso,NProf),
+		aplica_prof(IndispProfCurso,IndCurso,NProf),
+		verifica_nr_cursos_prof(NProf,3),
 		
 		sum(HCurso,#=,TotalHCurso),
 		%sum(HProf,#=,TotalHProf),
