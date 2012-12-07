@@ -57,8 +57,8 @@ indisp_prof_curso([[],[2],[1,3],[1],[2,3],[1],[2]]).
 % Curso-Vaga
 caso1([1-15,2-15,3-15]).
 caso2([1-13,2-15,3-11,4-14]).
-caso3([1-12,2-11,3-14,4-15,5-13]).
-caso4([1-13,2-14,3-13,4-15,5-14,6-14]).
+caso3([1-1,2-1,3-1,4-1,5-1]).
+caso4([1-1,2-1,3-1,4-1,5-1,6-1]).
 
 %IndCurso - lista dos indices dos cursos,  TotalVaga - Somatorio das vagas de tudos cursos
 sep_caso([],IndCurso,IndCurso,0).
@@ -81,13 +81,7 @@ aplica_prof(IndispProfCurso,[Ind1|Resto],[NProf1|NProfResto]):-
 		nth1(Ind1,IndispProfCurso,IndispProf), aplica_prof_aux(IndispProf,NProf1),
 		aplica_prof(IndispProfCurso,Resto,NProfResto).
 
-/*
-horas_por_prof([],[],HProf).
-horas_por_prof(HCurso,NProf,HProf,Np):-
-		element(Ind,HProf,Np), element(Ind,HCurso,Hps), 
-*/
-	
-horas_por_professor(_,_,HProf,0).
+horas_por_professor(_,_,_HProf,0).
 horas_por_professor(HCurso,NProf,HProf,NP):-
 				horas_aux(HCurso,NProf,NP,Total),
 				nth1(NP,HProf,Total),
@@ -123,27 +117,21 @@ escola(Caso):-
 		
 		sum(HCurso,#=,TotalHCurso),
 		Income #= TotalHCurso*TotalVaga*10, % receita total por semana
-		
-		%%%%%%%%%%%%%%%%%%falta implementar HProf%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		%%%%%    HCurso([H1,H2,H3,H4,H5])
-		%%%%%    NProf([ 1,3, 1, 2, 3])
-		%%%%%    HProf([H1+H3,H4,H2+H5]).
-		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 		horas_por_professor(HCurso,NProf,HProf,NP),		
 
-		%domain([HExtra],0,10), domain([HPt],0,10),
 		HExtra in 0..10, HPt in 0..10,
 		(N*15) #=< 2*40 + HExtra + HPt,
 		CustoFunc #= (2*40*15 + HExtra*25 + HPt*10),
 		
 		scalar_product([25,30,40],HProf,#=,CustoProf),
 
-		Income#>CustoProf+CustoFunc,
+		%Income#>CustoProf+CustoFunc,
 		LucroSemanal #= Income - CustoProf - CustoFunc,
 		List=[HExtra,HPt],
-		append(HCurso,NProf,L1), append(L1,HProf,L2),
+		append(HCurso,NProf,L1),
 		labeling([minimize(CustoFunc)],List),
-		labeling([maximize(LucroSemanal)],L2),
+		labeling([maximize(LucroSemanal)],L1),
 		
 		write('Maximo Lucro Semanal: '), write(LucroSemanal), nl,
 		write('Plano:'),nl,		
