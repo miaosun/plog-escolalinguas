@@ -54,11 +54,14 @@ indisp_prof_curso([[],[2],[1,3],[1],[2,3],[1],[2]]).
 		   
 preco_prof([25,30,40]).
 
+max_hextra(10).
+max_hpt(10).
+
 % Curso-Vaga
 caso1([1-15,2-15,3-15]).
 caso2([1-13,2-15,3-11,4-14]).
 caso3([1-1,2-1,3-1,4-1,5-1]).
-caso4([1-15,2-5,3-2,4-3,5-13,6-14]).
+caso4([1-1,2-1,3-1,4-1,5-1,6-1]).
 
 %IndCurso - lista dos indices dos cursos,  TotalVaga - Somatorio das vagas de tudos cursos
 sep_caso([],IndCurso,IndCurso,0).
@@ -83,10 +86,10 @@ aplica_prof(IndispProfCurso,[Ind1|Resto],[NProf1|NProfResto]):-
 
 horas_por_professor(_,_,_HProf,0).
 horas_por_professor(HCurso,NProf,HProf,NP):-
-				horas_aux(HCurso,NProf,NP,Total),
-				nth1(NP,HProf,Total),
-				NP1 is NP-1,
-				horas_por_professor(HCurso,NProf,HProf,NP1).
+		horas_aux(HCurso,NProf,NP,Total),
+		nth1(NP,HProf,Total),
+		NP1 is NP-1,
+		horas_por_professor(HCurso,NProf,HProf,NP1).
 					
 horas_aux([],[],_,0).				
 horas_aux([HCurso1|HResto],[NProf1|NResto],NP,Total):-
@@ -95,11 +98,11 @@ horas_aux([HCurso1|HResto],[NProf1|NResto],NP,Total):-
 		
 print_plano([],[],_,_).				
 print_plano([H|Hs],[P|Ps],ListaProfs,[Ind1|Inds]):-	
-				write(' Curso de '), curso(Ind1,Curso), write(Curso), nl,
-				nth1(P,ListaProfs,NomeP),
-				write('    Professor: '), write(NomeP), nl,
-				write('    Numero Horas Semanais: '), write(H), nl,
-				print_plano(Hs,Ps,ListaProfs,Inds).
+		write(' Curso de '), curso(Ind1,Curso), write(Curso), nl,
+		nth1(P,ListaProfs,NomeP),
+		write('    Professor: '), write(NomeP), nl,
+		write('    Numero Horas Semanais: '), write(H), nl,
+		print_plano(Hs,Ps,ListaProfs,Inds).
 
 						
 escola(Caso):-
@@ -118,20 +121,20 @@ escola(Caso):-
 		sum(HCurso,#=,TotalHCurso),
 	%	Income #= TotalHCurso*TotalVaga*10, % receita total por semana
 		length(LucroPorCurso,N),
-		write('test'),
+
 		lucro_por_curso(HCurso,NProf,Caso,PrecoProf,[],LucroPorCurso),
 
-		sum(LucroPorCurso,#=,LucroSemanal),
+		sum(LucroPorCurso,#=,LucroDosCursos),
 		horas_por_professor(HCurso,NProf,HProf,NP),		
 
-		HExtra in 0..10, HPt in 0..10,
+		max_hextra(MaxHEx),max_hpt(MaxHPt),
+		HExtra in 0..MaxHEx, HPt in 0..MaxHPt,
 		(N*15) #=< 2*40 + HExtra + HPt,
 		CustoFunc #= (2*40*15 + HExtra*25 + HPt*10),
 		
-		scalar_product([25,30,40],HProf,#=,CustoProf),
-
+		%scalar_product([25,30,40],HProf,#=,CustoProf),
 		%Income#>CustoProf+CustoFunc,
-		%LucroSemanal #= Income - CustoProf - CustoFunc,
+		LucroSemanal #= LucroDosCursos - CustoFunc,
 		List=[HExtra,HPt],
 		append(HCurso,NProf,L1),
 		labeling([minimize(CustoFunc)],List),
