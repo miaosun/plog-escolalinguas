@@ -133,10 +133,11 @@ escola(Caso):-
 		labeling([minimize(CustoFunc)],List),
 		labeling([maximize(LucroSemanal)],L1),
 		
-		write('Maximo Lucro Semanal: '), write(LucroSemanal), nl,
-		write('Plano:'),nl,		
-		%criar ListaCursos com nomes dos cursos de IndCursos
-		print_plano(HCurso,NProf,ListaProfs,IndCurso).
+		write('Maximo Lucro Semanal: '), write(LucroSemanal), nl, nl,
+		write('Plano:'),nl,
+		print_plano(HCurso,NProf,ListaProfs,IndCurso), nl,
+		write(' Horas Extra Necessarias das Funcionarias Administrativas: '), write(HExtra),nl,
+		write(' Horas de Funcionaria Part-time: '), write(HPt),nl.
 		
 		
 solve(Caso):-
