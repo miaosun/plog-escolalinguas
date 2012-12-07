@@ -80,23 +80,18 @@ aplica_prof(_IndispProfCurso,[],_NProf).
 aplica_prof(IndispProfCurso,[Ind1|Resto],[NProf1|NProfResto]):-
 		nth1(Ind1,IndispProfCurso,IndispProf), aplica_prof_aux(IndispProf,NProf1),
 		aplica_prof(IndispProfCurso,Resto,NProfResto).
-
-/*
-horas_por_prof([],[],HProf).
-horas_por_prof(HCurso,NProf,HProf,Np):-
-		element(Ind,HProf,Np), element(Ind,HCurso,Hps), 
-*/
 		
-horas_por_professor(_,_,HProf,0).
+horas_por_professor(_,_,_,0).
 horas_por_professor(HCurso,NProf,HProf,NP):-
-				horas_aux(HCurso,NProf,NP,Acum,Total),
-				element(NP,HProf,Total),
+				horas_aux(HCurso,NProf,NP,Total),
+				nth1(NP,HProf,Total),
 				NP1 is NP-1,
 				horas_por_professor(HCurso,NProf,HProf,NP1).
 					
-horas_aux([],[],_,Total):- write(Total).				
+horas_aux([],[],_,0).				
 horas_aux([HCurso1|HResto],[NProf1|NResto],NP,Total):-
-		(NP #= NProf1, horas_aux(HResto,NResto,NP,Total), Total #= Acum+HCurso1) #\ (horas_aux(HResto,NResto,NP,Total)).
+		(NP #= NProf1) #<=> A, horas_aux(HResto,NResto,NP,Acum), Total #= Acum+(A*HCurso1).
+			
 			
 print_plano([],[]).				
 print_plano([H|Hs],[P|Ps],ListaProfs,[Ind1|Inds]):-	
@@ -104,12 +99,13 @@ print_plano([H|Hs],[P|Ps],ListaProfs,[Ind1|Inds]):-
 				element(P,ListaProfs,NomeP),
 				write(' Professor: '), write(NomeP), nl,
 				write('Numero Horas Semanais: '), write(H), nl,
-				print_plano(Hs,Ps,ListaProfs,Cs).
+				print_plano(Hs,Ps,ListaProfs,Inds).
 
 						
 escola(Caso):-
 		length(Caso,N), length(HCurso,N), length(NProf,N),
 		profs(ListaProfs), length(ListaProfs,NP),
+		length(HProf,NP),
 		
 		domain(HCurso,4,8), % lista com as horas de cada curso (indice)
 		domain(NProf,1,3),  % lista c professor p cada curso (indice)
@@ -123,12 +119,7 @@ escola(Caso):-
 		sum(HCurso,#=,TotalHCurso),
 		Income #= TotalHCurso*TotalVaga*10, % receita total por semana
 		
-		%%%%%%%%%%%%%%%%%%falta implementar HProf%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		%%%%%    HCurso([H1,H2,H3,H4,H5])
-		%%%%%    NProf([ 1,3, 1, 2, 3])
-		%%%%%    HProf([H1+H3,H4,H2+H5]).
-		%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-		%horas_por_professor(HCurso,NProf,HProf,NP),		
+		horas_por_professor(HCurso,NProf,HProf,NP),		
 
 		domain([HExtra],0,10), domain([HPt],0,10),
 		(N*15) #=< 2*40 + HExtra + HPt,
@@ -139,11 +130,10 @@ escola(Caso):-
 		Income#>CustoProf+CustoFunc,
 		LucroSemanal #= Income - CustoProf - CustoFunc,
 		
-		labeling([maximize(LucroSemanal)],[HCurso,NProf,HProf]),
+		labeling([maximize(LucroSemanal)],HCurso,NProf,HProf),
 		write('Maximo Lucro Semanal: '), write(LucroSemanal), nl,
 		write('Plano:'),nl,
 		
-		%criar ListaCursos com nomes dos cursos de IndCursos
 		print_plano(HCurso,NProf,ListaProfs,IndCurso).
 		
 		
