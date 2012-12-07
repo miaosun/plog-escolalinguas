@@ -52,13 +52,13 @@ curso_prof([1,2,5,7],    %Prof. Annette
 %prof_curso([[1,2,3],[1,3],[2],[2,3],[1],[2,3],[1,3]]).		   
 indisp_prof_curso([[],[2],[1,3],[1],[2,3],[1],[2]]).
 		   
-%precoProf([25,30,40]).
+preco_prof([25,30,40]).
 
 % Curso-Vaga
 caso1([1-15,2-15,3-15]).
 caso2([1-13,2-15,3-11,4-14]).
 caso3([1-1,2-1,3-1,4-1,5-1]).
-caso4([1-1,2-1,3-1,4-1,5-1,6-1]).
+caso4([1-15,2-5,3-2,4-3,5-13,6-14]).
 
 %IndCurso - lista dos indices dos cursos,  TotalVaga - Somatorio das vagas de tudos cursos
 sep_caso([],IndCurso,IndCurso,0).
@@ -105,19 +105,23 @@ print_plano([H|Hs],[P|Ps],ListaProfs,[Ind1|Inds]):-
 escola(Caso):-
 		length(Caso,N), length(HCurso,N), length(NProf,N),
 		profs(ListaProfs), length(ListaProfs,NP),length(HProf,NP),
-		
+		preco_prof(PrecoProf),
 		domain(HCurso,4,8), % lista com as horas de cada curso (indice)
 		domain(NProf,1,3),  % lista c professor p cada curso (indice)
 		
 		%curso_prof(CursoProf), prof_curso(ProfCurso),
 		indisp_prof_curso(IndispProfCurso),	
-		sep_caso(Caso,[],IndCurso,TotalVaga),
+		sep_caso(Caso,[],IndCurso1,TotalVaga), reverse(IndCurso1,IndCurso),
 		aplica_prof(IndispProfCurso,IndCurso,NProf),
 		verifica_nr_cursos_prof(NProf,NP),
 		
 		sum(HCurso,#=,TotalHCurso),
-		Income #= TotalHCurso*TotalVaga*10, % receita total por semana
+	%	Income #= TotalHCurso*TotalVaga*10, % receita total por semana
+		length(LucroPorCurso,N),
+		write('test'),
+		lucro_por_curso(HCurso,NProf,Caso,PrecoProf,[],LucroPorCurso),
 
+		sum(LucroPorCurso,#=,LucroSemanal),
 		horas_por_professor(HCurso,NProf,HProf,NP),		
 
 		HExtra in 0..10, HPt in 0..10,
@@ -127,7 +131,7 @@ escola(Caso):-
 		scalar_product([25,30,40],HProf,#=,CustoProf),
 
 		%Income#>CustoProf+CustoFunc,
-		LucroSemanal #= Income - CustoProf - CustoFunc,
+		%LucroSemanal #= Income - CustoProf - CustoFunc,
 		List=[HExtra,HPt],
 		append(HCurso,NProf,L1),
 		labeling([minimize(CustoFunc)],List),
@@ -139,6 +143,11 @@ escola(Caso):-
 		write(' Horas Extra Necessarias das Funcionarias Administrativas: '), write(HExtra),nl,
 		write(' Horas de Funcionaria Part-time: '), write(HPt),nl.
 		
+lucro_por_curso([],[],[],_,LucroPorCurso,LucroPorCurso).
+lucro_por_curso([HCurso1|HResto],[NProf1|NResto],[_-Vaga|CResto],PrecoProf,Acc,LucroPorCurso):-
+		nth1(NProf1,PrecoProf,Salario),
+		L1 #= HCurso1*Vaga*10 - Salario*HCurso1,
+		lucro_por_curso(HResto,NResto,CResto,PrecoProf,[L1|Acc],LucroPorCurso).
 		
 solve(Caso):-
 		statistics(walltime,[Start,_]),
