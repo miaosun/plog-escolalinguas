@@ -31,7 +31,8 @@
 :- use_module(library(clpfd)).
 :- use_module(library(lists)).
 %:- compile('dados1.pl').
-:- compile('dados2.pl').
+%:- compile('dados2.pl').
+:- compile('dados3.pl').
 
 solve(Caso):-
 		statistics(walltime,[Start,_]),
@@ -47,12 +48,12 @@ escola(Caso):-
 		preco_prof(PrecoProf),
 		domain(HCurso,4,8), % lista com as horas de cada curso (indice)
 		domain(NProf,1,NP),  % lista c professor p cada curso (indice)
-
+		
 		indisp_prof_curso(IndispProfCurso),	
 		sep_caso(Caso,[],IndCurso1,_TotalVaga), reverse(IndCurso1,IndCurso),
 		aplica_prof(IndispProfCurso,IndCurso,NProf),
+
 		verifica_nr_cursos_prof(NProf,NP),
-		
 		length(LucroPorCurso,N),
 		lucro_por_curso(HCurso,NProf,Caso,PrecoProf,[],LucroPorCurso),
 
