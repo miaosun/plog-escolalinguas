@@ -31,8 +31,9 @@
 :- use_module(library(clpfd)).
 :- use_module(library(lists)).
 %:- compile('dados1.pl').
-:- compile('dados2.pl').
+%:- compile('dados2.pl').
 %:- compile('dados3.pl').
+:- compile('dados_opcional.pl').
 
 solve(Caso):-
 		statistics(walltime,[Start,_]),
@@ -70,7 +71,7 @@ escola(Caso):-
 		LucroSemanal #= LucroDosCursos - CustoFunc,
 		append(HCurso,NProf,L1),
 		labeling([minimize(CustoFunc)],[HExtra,HPt]),
-		labeling([max,maximize(LucroSemanal)],L1),
+		labeling([min,maximize(LucroSemanal)],L1),
 		
 		write('Maximo Lucro Semanal: '), write(LucroSemanal), nl, nl,
 		write('Plano:'),nl,
