@@ -30,9 +30,9 @@
 
 :- use_module(library(clpfd)).
 :- use_module(library(lists)).
-%:- compile('dados1.pl').
+:- compile('dados1.pl').
 %:- compile('dados2.pl').
-:- compile('dados3.pl').
+%:- compile('dados3.pl').
 
 solve(Caso):-
 		statistics(walltime,[Start,_]),
