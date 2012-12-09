@@ -1,4 +1,4 @@
-﻿
+﻿%%%%%% CASO BASE: %%%%%%%%%%%
 % 3x Professores
 %  Prof. Annette: Frances, Portugues, Espanhol, Alemao
 %  Prof. Boris:   Russo, Italiano, Frances, Espanhol, Portugues
@@ -30,10 +30,12 @@
 
 :- use_module(library(clpfd)).
 :- use_module(library(lists)).
-%:- compile('dados1.pl').
+
+% Ficheiros de teste. Descomentar o que se pretende utilizar:
+:- compile('dados1.pl').
 %:- compile('dados2.pl').
 %:- compile('dados3.pl').
-:- compile('dados_opcional.pl').
+%:- compile('dados_opcional.pl').
 
 solve(Caso):-
 		statistics(walltime,[Start,_]),
@@ -45,12 +47,12 @@ solve(Caso):-
 						
 escola(Caso):-
 		length(Caso,N), length(HCurso,N), length(NProf,N),
-		profs(ListaProfs), length(ListaProfs,NP),%length(HProf,NP),
-		preco_prof(PrecoProf),
+		profs(ListaProfs), length(ListaProfs,NP),
+		preco_prof(PrecoProf), % lista com vencimento por hora de cada professor
 		domain(HCurso,4,8), % lista com as horas de cada curso (indice)
 		domain(NProf,1,NP),  % lista c professor p cada curso (indice)
 		
-		indisp_prof_curso(IndispProfCurso),	
+		indisp_prof_curso(IndispProfCurso),
 		sep_caso(Caso,[],IndCurso1,_TotalVaga), reverse(IndCurso1,IndCurso),
 		aplica_prof(IndispProfCurso,IndCurso,NProf),
 
@@ -58,10 +60,7 @@ escola(Caso):-
 		length(LucroPorCurso,N),
 		lucro_por_curso(HCurso,NProf,Caso,PrecoProf,[],LucroPorCurso),
 
-		sum(LucroPorCurso,#=,LucroDosCursos),
-		%horas_por_professor(HCurso,NProf,HProf,NP),		
-		%scalar_product([25,30,40],HProf,#=,CustoProf),
-		%Income#>CustoProf+CustoFunc,
+		sum(LucroPorCurso,#=,LucroDosCursos), % LucroDosCursos é o lucro total, ou seja, somatório do lucro de todos os cursos
 		
 		max_hextra(MaxHEx),max_hpt(MaxHPt),
 		HExtra in 0..MaxHEx, HPt in 0..MaxHPt,
@@ -81,7 +80,7 @@ escola(Caso):-
 
 
 		
-%IndCurso - lista dos indices dos cursos,  TotalVaga - Somatorio das vagas de tudos cursos
+%IndCurso - lista dos índices dos cursos,  TotalVaga - Somatório das vagas de tudos cursos
 sep_caso([],IndCurso,IndCurso,0).
 sep_caso([NCurso-Vaga|Resto],Acc,IndCurso,TotalVaga):-
 		sep_caso(Resto,[NCurso|Acc],IndCurso,Acum),
@@ -95,18 +94,19 @@ verifica_nr_cursos_prof(NProf,N):-
 		N1 is N-1, 
 		verifica_nr_cursos_prof(NProf,N1).
 
-		
+% predicado auxiliar de aplica_prof/3		
 aplica_prof_aux([],_).	
 aplica_prof_aux([IndispProf1|T],NProf1):-
 		NProf1 #\= IndispProf1, aplica_prof_aux(T,NProf1).
 
-		
+% restringe, para cada curso, apenas os professores com habilitações para os leccionar	
 aplica_prof(_IndispProfCurso,[],_NProf).
 aplica_prof(IndispProfCurso,[Ind1|Resto],[NProf1|NProfResto]):-
 		nth1(Ind1,IndispProfCurso,IndispProf), 
 		aplica_prof_aux(IndispProf,NProf1),
 		aplica_prof(IndispProfCurso,Resto,NProfResto).
 
+% Deixou de ser necessário:
 /*		
 horas_por_professor(_,_,_HProf,0).
 horas_por_professor(HCurso,NProf,HProf,NP):-
@@ -121,14 +121,14 @@ horas_aux([HCurso1|HResto],[NProf1|NResto],NP,Total):-
 		(NP #= NProf1) #<=> A, horas_aux(HResto,NResto,NP,Acum),
 		Total #= Acum+HCurso1*A.
 
-		
+% atribui, na lista LucroPorCurso, o lucro para cada curso (excluindo ainda custos de manutenção)
 lucro_por_curso([],[],[],_,LucroPorCurso,LucroPorCurso).
 lucro_por_curso([HCurso1|HResto],[NProf1|NResto],[_-Vaga|CResto],PrecoProf,Acc,LucroPorCurso):-
 		nth1(NProf1,PrecoProf,Salario),
 		L1 #= HCurso1*Vaga*10 - Salario*HCurso1,
 		lucro_por_curso(HResto,NResto,CResto,PrecoProf,[L1|Acc],LucroPorCurso).
 		
-		
+% imprime o plano para cada curso: Professor responsável e número de horas semanais	
 print_plano([],[],_,_).				
 print_plano([H|Hs],[P|Ps],ListaProfs,[Ind1|Inds]):-	
 		write(' Curso de '), curso(Ind1,Curso), write(Curso), nl,
