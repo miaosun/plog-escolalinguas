@@ -1,5 +1,5 @@
-﻿% Cursos = [Espanhol,Frances,Ingles,Italiano,Alemao,Russo,Portugues]
-%              1        2      3       4       5      6       7         
+﻿% Cursos = [Espanhol,Frances,Ingles,Italiano,Alemao,Russo]
+%              1        2      3       4       5      6          
 
 profs(['Annete','Charles','Boris']).
 curso(1,'Espanhol').
@@ -8,7 +8,6 @@ curso(3,'Ingles').
 curso(4,'Italiano').
 curso(5,'Alemao').
 curso(6,'Russo').
-curso(7,'Portugues').
 
 /*
 curso_prof([1,2,5,7],    %Prof. Annette
@@ -26,9 +25,10 @@ max_hpt(10).
 
 % Curso-Vaga
 caso1([1-15,2-15,3-15]).
-caso2([1-13,2-15,3-11,4-14]).
-caso3([1-1,2-1,3-1,4-1,5-1]).
-caso4([1-1,2-1,3-1,4-1,5-1,6-1]).
+caso2([1-15,2-15,3-15,4-15,5-15,6-15]).
+caso3([1-13,2-15,3-11,4-14]).
+caso4([1-1,2-1,3-1,4-1,5-1]).
+caso5([1-1,2-1,3-1,4-1,5-1,6-1]).
 
 
 
